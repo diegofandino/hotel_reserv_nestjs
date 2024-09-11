@@ -1,0 +1,61 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Roles {
+  id Int @id @unique @default(autoincrement())
+  roleName String @db.VarChar(30)
+  user Users?
+}
+
+model Users {
+  uuid String @unique
+  role Roles @relation(fields: [roleId], references: [id])
+  roleId Int @unique
+  name String @db.VarChar(50)
+  lastName String @db.VarChar(50)
+  email String @unique @db.VarChar(50)
+  prefixNumber String @db.VarChar(5)
+  phone String @db.VarChar(20)
+  status String @db.VarChar(20)
+  createdAt DateTime
+  updatedAt DateTime
+  reservationsCreated Reservations[]
+}
+
+model Rooms {
+  uuid String @unique
+  privateBath Boolean 
+  kitchen Boolean
+  statusRoom String @db.VarChar(20)
+  observations String  
+  createdAt DateTime
+  updatedAt DateTime
+  reservationId String? @unique
+  reservation Reservations? @relation(fields: [reservationId], references: [uuid])
+}
+
+model Reservations {
+  uuid String @unique
+  customer String @db.VarChar(50)
+  prefixPhoneCustomer String @db.VarChar(5)
+  phoneCustomer String @db.VarChar(20)
+  checkIn DateTime
+  checkOut DateTime
+  createdAt DateTime
+  updatedAt DateTime
+  user Users @relation(fields: [userWhoCreate], references: [email])
+  userWhoCreate String
+  Rooms Rooms[]
+}

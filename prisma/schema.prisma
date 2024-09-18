@@ -13,9 +13,15 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum Status {
+  active
+  inactive
+}
+
 model Roles {
   id Int @id @unique @default(autoincrement())
-  roleName String @db.VarChar(30)
+  roleName String @db.VarChar(30) @unique
+  status Status @default(active)
   user Users?
 }
 
@@ -25,10 +31,11 @@ model Users {
   roleId Int @unique
   name String @db.VarChar(50)
   lastName String @db.VarChar(50)
-  email String @unique @db.VarChar(50)
+  email String @unique @db.VarChar(50) 
+  password String @db.VarChar(50)
   prefixNumber String @db.VarChar(5)
   phone String @db.VarChar(20)
-  status String @db.VarChar(20)
+  status Status @default(active)
   createdAt DateTime
   updatedAt DateTime
   reservationsCreated Reservations[]
